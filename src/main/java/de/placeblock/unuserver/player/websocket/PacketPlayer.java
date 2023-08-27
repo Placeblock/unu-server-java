@@ -10,6 +10,7 @@ import de.placeblock.unuserver.packets.in.InPacket;
 import de.placeblock.unuserver.packets.in.room.RoomRequiredPacket;
 import de.placeblock.unuserver.packets.in.round.RoundRequiredPacket;
 import de.placeblock.unuserver.packets.out.OutPacket;
+import de.placeblock.unuserver.packets.out.player.OwnPlayerDataOutPacket;
 import de.placeblock.unuserver.packets.out.player.PlayerDataOutPacket;
 import de.placeblock.unuserver.packets.out.room.*;
 import de.placeblock.unuserver.packets.out.round.*;
@@ -43,8 +44,8 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void removeRoundPlayer(RoundPlayer player, boolean kicked) {
-        this.send(new PlayerLeftRoundOutPacket(player.getPlayer().getUuid(), kicked));
+    public void removeRoundPlayer(RoundPlayer player, Round.RemovePlayerReason reason) {
+        this.send(new PlayerLeftRoundOutPacket(player.getPlayer().getUuid(), reason));
     }
 
     @Override
@@ -53,7 +54,7 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setPlayedCard(Card card) {
+    public void setPlacedCard(Card card) {
         this.send(new PlayCardOutPacket(card));
     }
 
@@ -88,8 +89,8 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setJoinedRoom(Player player, Room.RoomData roomData) {
-        this.send(new JoinRoomOutPacket(player, roomData));
+    public void sendOwnPlayerData(Player player) {
+        this.send(new OwnPlayerDataOutPacket(player));
     }
 
     @Override

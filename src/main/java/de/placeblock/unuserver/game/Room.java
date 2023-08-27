@@ -3,6 +3,7 @@ package de.placeblock.unuserver.game;
 import de.placeblock.unuserver.Main;
 import de.placeblock.unuserver.cards.Card;
 import de.placeblock.unuserver.game.round.Round;
+import de.placeblock.unuserver.game.round.RoundPlayer;
 import de.placeblock.unuserver.game.round.RoundSettings;
 import de.placeblock.unuserver.player.Player;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class Room {
     private final int code;
     private final List<Player> players = new ArrayList<>();
     private State state;
-    private Leaderboard leaderboard;
+    private final Leaderboard leaderboard = new Leaderboard();
     private RoundSettings roundSettings;
     private List<Card> cardStack;
     private Round round;
@@ -30,9 +31,12 @@ public class Room {
 
     public void startRound() {
         this.round = new Round(this, this.roundSettings, this.players, this.cardStack);
-        Round.RoundData roundData = Round.RoundData.fromRound(this.round);
-        this.executeForPlayers(p -> p.setRoundData(roundData));
         this.setState(State.INGAME);
+    }
+
+    public void endRound() {
+        this.round = null;
+        this.setState(State.LOBBY);
     }
 
     public void setCardStack(List<Card> cardStack) {
@@ -53,7 +57,10 @@ public class Room {
 
     public void removePlayer(Player player, boolean kicked) {
         if (this.round != null) {
-            this.round.removePlayer(player, kicked);
+            RoundPlayer roundPlayer = this.round.getRoundPlayer(player.getUuid());
+            if (roundPlayer != null) {
+                this.round.removePlayer(roundPlayer, kicked ? Round.RemovePlayerReason.KICKED : Round.RemovePlayerReason.LEFT);
+            }
         }
         this.players.remove(player);
         this.executeForPlayers(p -> p.removeRoomPlayer(player, kicked));
@@ -71,11 +78,11 @@ public class Room {
 
     public enum State {
         LOBBY,
-        INGAME,
-        GAMERESULT
+        INGAME
     }
 
     // This gets transferred over network
+    @Getter
     @RequiredArgsConstructor
     public static class RoomData {
         private final List<Player> players;

@@ -1,5 +1,7 @@
 package de.placeblock.unuserver.packets.in.round;
 
+import de.placeblock.unuserver.game.round.Round;
+import de.placeblock.unuserver.game.round.RoundPlayer;
 import de.placeblock.unuserver.packets.PlayerPacket;
 import de.placeblock.unuserver.packets.in.InPacket;
 import de.placeblock.unuserver.player.Player;
@@ -15,6 +17,9 @@ public class KickRoundPlayerInPacket extends InPacket implements PlayerPacket, R
 
     @Override
     public void onReceive(Player player) {
-        player.getRoom().getRound().removePlayer(player, true);
+        Round round = player.getRoom().getRound();
+        RoundPlayer roundPlayer = round.getRoundPlayer(player.getUuid());
+        if (roundPlayer == null) return;
+        round.removePlayer(roundPlayer, Round.RemovePlayerReason.KICKED);
     }
 }

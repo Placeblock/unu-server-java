@@ -24,21 +24,21 @@ public abstract class Player {
 
     public abstract void setRoundSettings(RoundSettings roundSettings);
     public abstract void setCardStack(List<Card> cardStack);
-    public abstract void removeRoundPlayer(RoundPlayer player, boolean kicked);
+    public abstract void removeRoundPlayer(RoundPlayer player, Round.RemovePlayerReason reason);
     public abstract void setPlayerCardAmount(RoundPlayer player, int amount);
-    public abstract void setPlayedCard(Card card);
+    public abstract void setPlacedCard(Card card);
     public abstract void setInventory(Inventory inventory);
     public abstract void setDrawStack(int drawStack);
     public abstract void confirmDrawnCard(Card card, Round.DrawReason reason);
     public abstract void setCurrentPlayer(RoundPlayer roundPlayer);
     public abstract void showPlayerAcknowledgeLastCard(RoundPlayer roundPlayer);
     public abstract void sendPlayerData(Player player);
-    public abstract void setJoinedRoom(Player player, Room.RoomData roomData);
     public abstract void setLeaderboard(Leaderboard leaderboard);
     public abstract void removeRoomPlayer(Player player, boolean kicked);
     public abstract void setRoomState(Room.State state);
     public abstract void setRoomData(Room.RoomData roomData);
     public abstract void setRoundData(Round.RoundData roundData);
     public abstract void setCreatedRoomCode(int code);
+    public abstract void sendOwnPlayerData(Player player);
 
 }

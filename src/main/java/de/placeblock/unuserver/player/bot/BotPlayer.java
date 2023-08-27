@@ -23,7 +23,12 @@ public class BotPlayer extends Player {
     }
 
     @Override
-    public void removeRoundPlayer(RoundPlayer player) {
+    public void setCardStack(List<Card> cardStack) {
+
+    }
+
+    @Override
+    public void removeRoundPlayer(RoundPlayer player, Round.RemovePlayerReason reason) {
 
     }
 
@@ -33,7 +38,7 @@ public class BotPlayer extends Player {
     }
 
     @Override
-    public void setPlayedCard(Card card) {
+    public void setPlacedCard(Card card) {
 
     }
 
@@ -43,7 +48,7 @@ public class BotPlayer extends Player {
     }
 
     @Override
-    public void setDrawStack(List<Card> drawStack) {
+    public void setDrawStack(int drawStack) {
 
     }
 
@@ -68,22 +73,37 @@ public class BotPlayer extends Player {
     }
 
     @Override
-    public void setJoinedRoom(Player player, Room.RoomData roomData) {
-
-    }
-
-    @Override
     public void setLeaderboard(Leaderboard leaderboard) {
 
     }
 
     @Override
-    public void removeRoomPlayer(Player player) {
+    public void removeRoomPlayer(Player player, boolean kicked) {
 
     }
 
     @Override
     public void setRoomState(Room.State state) {
+
+    }
+
+    @Override
+    public void setRoomData(Room.RoomData roomData) {
+
+    }
+
+    @Override
+    public void setRoundData(Round.RoundData roundData) {
+
+    }
+
+    @Override
+    public void setCreatedRoomCode(int code) {
+
+    }
+
+    @Override
+    public void sendOwnPlayerData(Player player) {
 
     }
 }

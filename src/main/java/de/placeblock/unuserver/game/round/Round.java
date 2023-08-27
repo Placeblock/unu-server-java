@@ -6,6 +6,7 @@ import de.placeblock.unuserver.player.Inventory;
 import de.placeblock.unuserver.player.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -16,25 +17,31 @@ public class Round {
     private final List<RoundPlayer> players = new ArrayList<>();
     private final RoundSettings roundSettings;
     private RoundPlayer currentPlayer;
-
     // Players who have to shout "UNO!"
     private final List<RoundPlayer> acknowledgeLastCardPlayers = new ArrayList<>();
     private final LinkedList<Card> cardStack = new LinkedList<>();
     private final List<Card> placedCards = new ArrayList<>();
     private int placedCardsAll = 0;
     private int drawStack = 0;
+    @Setter
     private int nextPlayerDelta = 1;
 
     public Round(Room room, RoundSettings roundSettings, List<Player> players, List<Card> cardStack) {
         this.room = room;
         this.roundSettings = roundSettings;
         for (Player player : players) {
-            this.players.add(new RoundPlayer(player, new Inventory()));
+            RoundPlayer roundPlayer = new RoundPlayer(player);
+            Inventory inventory = new Inventory(roundPlayer);
+            roundPlayer.setInventory(inventory);
+            this.players.add(roundPlayer);
         }
         int randomPlayerIndex = (int) (Math.random() * this.players.size());
-        this.currentPlayer = this.players.get(randomPlayerIndex);
+        this.setNextPlayer(this.players.get(randomPlayerIndex));
         this.cardStack.addAll(cardStack);
-        //TODO: FILL INVENTORIES
+        for (RoundPlayer player : this.players) {
+            List<Card> cards = this.drawCards(roundSettings.getStartCardAmount());
+            player.getInventory().addCards(cards);
+        }
     }
 
     // PLAYER MANAGEMENT
@@ -49,15 +56,13 @@ public class Round {
         return this.calculateNextPlayer(this.nextPlayerDelta);
     }
 
-    public void removePlayer(Player player, boolean kicked) {
-        RoundPlayer roundPlayer = this.getRoundPlayer(player.getUuid());
-        if (roundPlayer == null) return;
+    public void removePlayer(RoundPlayer roundPlayer, RemovePlayerReason reason) {
         if (this.players.size() == 1) {
-            this.endRound();
+            this.room.endRound();
             return;
         }
         this.players.remove(roundPlayer);
-        this.room.executeForPlayers(p -> p.removeRoundPlayer(roundPlayer, kicked));
+        this.room.executeForPlayers(p -> p.removeRoundPlayer(roundPlayer, reason));
         if (this.currentPlayer.equals(roundPlayer)) {
             this.setNextPlayer(this.calculateNextPlayer());
         }
@@ -76,7 +81,6 @@ public class Round {
     public void setNextPlayer(RoundPlayer player) {
         this.currentPlayer = player;
         this.room.executeForPlayers(p -> p.setCurrentPlayer(this.currentPlayer));
-        //TODO: CHECK IF PLAYER CAN LAY CARDS, IF NOT APPLY DRAW STACK
     }
 
     // CARD MANAGEMENT
@@ -85,10 +89,30 @@ public class Round {
         return this.placedCards.get(this.placedCards.size()-1);
     }
 
+    public void placeCard(RoundPlayer roundPlayer, Card card) {
+        if (!this.currentPlayer.equals(roundPlayer) ||
+            !this.canPlaceCard(card) ||
+            !roundPlayer.getInventory().hasCard(card)) return;
+        // TODO: CHECK CURRENT MOVE STATE
+        // Players that didn't say UNO before the next player places a card get punished
+        this.punishNotAcknowledgedPlayers();
+        this.placeCard(card);
+        roundPlayer.getInventory().removeCard(card);
+
+        if (roundPlayer.getInventory().size() == 0) {
+            this.removePlayer(roundPlayer, RemovePlayerReason.WON);
+        }
+    }
+
     public void drawCard(RoundPlayer roundPlayer) {
         if (!this.currentPlayer.equals(roundPlayer)) return;
+        // TODO: IMPLEMENT
+        // TODO: CHECK CURRENT MOVE STATE
+        // Players that didn't say UNO before the next player draws a card get punished
+        this.punishNotAcknowledgedPlayers();
         this.applyDrawStack(roundPlayer);
         Card card = this.drawCard();
+        roundPlayer.getInventory().addCard(card);
         roundPlayer.getPlayer().confirmDrawnCard(card, DrawReason.DRAW);
     }
 
@@ -113,6 +137,7 @@ public class Round {
         List<Card> cards = this.drawCards(this.drawStack);
         this.setDrawStack(0);
         for (Card card : cards) {
+            roundPlayer.getInventory().addCard(card);
             roundPlayer.getPlayer().confirmDrawnCard(card, DrawReason.DRAW_STACK);
         }
     }
@@ -134,10 +159,14 @@ public class Round {
     public void placeCard(Card card) {
         card.place(this);
         this.placedCards.add(card);
+        this.room.executeForPlayers(p -> p.setPlacedCard(card));
+        // Only for statistics
+        this.placedCardsAll++;
     }
 
     public void acknowledgeLastCard(RoundPlayer player) {
         this.acknowledgeLastCardPlayers.remove(player);
+        this.room.executeForPlayers(p -> p.showPlayerAcknowledgeLastCard(player));
     }
 
     /**
@@ -147,15 +176,10 @@ public class Round {
         for (RoundPlayer roundPlayer : this.acknowledgeLastCardPlayers) {
             List<Card> drawnCards = this.drawCards(2);
             for (Card drawnCard : drawnCards) {
+                roundPlayer.getInventory().addCard(drawnCard);
                 roundPlayer.getPlayer().confirmDrawnCard(drawnCard, DrawReason.NO_LAST_CARD_ACKNOWLEDGE);
             }
         }
-    }
-
-    // ROUND MANAGEMENT
-
-    public void endRound() {
-        this.room.setState(Room.State.GAMERESULT);
     }
 
 
@@ -165,7 +189,14 @@ public class Round {
         NO_LAST_CARD_ACKNOWLEDGE,
     }
 
+    public enum RemovePlayerReason {
+        LEFT,
+        KICKED,
+        WON
+    }
+
     // This gets sent over network
+    @Getter
     @RequiredArgsConstructor
     public static class RoundData {
         private final List<UUID> players;
