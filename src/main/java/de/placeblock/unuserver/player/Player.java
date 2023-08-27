@@ -1,5 +1,6 @@
 package de.placeblock.unuserver.player;
 
+import de.placeblock.unuserver.Main;
 import de.placeblock.unuserver.cards.Card;
 import de.placeblock.unuserver.game.Leaderboard;
 import de.placeblock.unuserver.game.Room;
@@ -27,6 +28,7 @@ public abstract class Player {
     }
 
     public void remove() {
+        Main.LOGGER.info("Removing WebSocketPlayer");
         if (this.room != null) {
             this.room.removePlayer(this, false);
         }

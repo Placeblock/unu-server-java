@@ -54,11 +54,10 @@ public class WebSocketEndpoint {
     }
 
     @OnWebSocketError
-    public void onError(Session session, Throwable throwable) throws Throwable {
+    public void onError(Session session, Throwable throwable) {
         Player player = this.players.remove(session);
         if (player != null) {
             player.remove();
         }
-        throw throwable;
     }
 }

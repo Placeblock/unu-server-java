@@ -1,6 +1,7 @@
 package de.placeblock.unuserver.player.packet.websocket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.placeblock.unuserver.Main;
 import de.placeblock.unuserver.packets.out.OutPacket;
 import de.placeblock.unuserver.packets.out.player.OwnPlayerDataOutPacket;
 import de.placeblock.unuserver.player.packet.PacketPlayer;
@@ -17,6 +18,7 @@ public class WebSocketPlayer extends PacketPlayer {
     private final Session session;
 
     public WebSocketPlayer(Session session) {
+        Main.LOGGER.info("New WebSocketPlayer");
         this.session = session;
         this.setOwnPlayerData();
         this.send(new OwnPlayerDataOutPacket(this));

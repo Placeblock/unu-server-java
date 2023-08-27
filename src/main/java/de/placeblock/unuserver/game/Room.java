@@ -54,12 +54,14 @@ public class Room {
     }
 
     public void addPlayer(Player player) {
+        Main.LOGGER.info("Adding Player to Room " + this.getCode());
         this.players.add(player);
         player.setRoomData(RoomData.fromRoom(this));
         this.executeForPlayers(p -> p.sendPlayerData(player));
     }
 
     public void removePlayer(Player player, boolean kicked) {
+        Main.LOGGER.info("Removing Player to Room " + this.getCode());
         if (this.round != null) {
             RoundPlayer roundPlayer = this.round.getRoundPlayer(player.getUuid());
             if (roundPlayer != null) {

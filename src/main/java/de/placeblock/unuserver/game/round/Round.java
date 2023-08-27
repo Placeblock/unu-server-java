@@ -1,5 +1,6 @@
 package de.placeblock.unuserver.game.round;
 
+import de.placeblock.unuserver.Main;
 import de.placeblock.unuserver.cards.Card;
 import de.placeblock.unuserver.game.Room;
 import de.placeblock.unuserver.player.Inventory;
@@ -26,6 +27,7 @@ public class Round {
     private int nextPlayerDelta = 1;
 
     public Round(Room room, RoundSettings roundSettings, List<Player> players, List<Card> cardStack) {
+        Main.LOGGER.info("Creating Round for Room " + room.getCode());
         this.room = room;
         this.roundSettings = roundSettings;
         for (Player player : players) {
