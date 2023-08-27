@@ -85,8 +85,8 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setOwnPlayerData(Player player) {
-        this.send(new OwnPlayerDataOutPacket(player));
+    public void setOwnPlayerData() {
+        this.send(new OwnPlayerDataOutPacket(this));
     }
 
     @Override

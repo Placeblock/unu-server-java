@@ -10,11 +10,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.24")
-    annotationProcessor("org.projectlombok:lombok:1.18.24")
+    compileOnly("org.projectlombok:lombok:1.18.28")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
 
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("javax.websocket:javax.websocket-api:1.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+    implementation("org.eclipse.jetty.websocket:websocket-server:9.4.51.v20230217")
+    implementation("org.eclipse.jetty.websocket:websocket-api:9.4.51.v20230217")
 }
 
 tasks.test {

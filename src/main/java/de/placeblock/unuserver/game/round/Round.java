@@ -12,7 +12,6 @@ import java.util.*;
 
 @Getter
 public class Round {
-    // Transient because we don't want to serialize this
     private final Room room;
     private final List<RoundPlayer> players = new ArrayList<>();
     private final RoundSettings roundSettings;

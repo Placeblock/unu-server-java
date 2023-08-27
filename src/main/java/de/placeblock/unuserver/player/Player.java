@@ -48,7 +48,7 @@ public abstract class Player {
     public abstract void setRoomState(Room.State state);
     public abstract void setRoomData(Room.RoomData roomData);
     public abstract void setCreatedRoomCode(int code);
-    public abstract void setOwnPlayerData(Player player);
+    public abstract void setOwnPlayerData();
     public abstract void setPlayerName(Player player, String name);
 
 }
