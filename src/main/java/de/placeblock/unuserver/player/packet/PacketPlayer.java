@@ -1,4 +1,4 @@
-package de.placeblock.unuserver.player.websocket;
+package de.placeblock.unuserver.player.packet;
 
 import de.placeblock.unuserver.cards.Card;
 import de.placeblock.unuserver.game.Leaderboard;
@@ -12,19 +12,15 @@ import de.placeblock.unuserver.packets.in.round.RoundRequiredPacket;
 import de.placeblock.unuserver.packets.out.OutPacket;
 import de.placeblock.unuserver.packets.out.player.OwnPlayerDataOutPacket;
 import de.placeblock.unuserver.packets.out.player.PlayerDataOutPacket;
+import de.placeblock.unuserver.packets.out.player.PlayerNameOutPacket;
 import de.placeblock.unuserver.packets.out.room.*;
 import de.placeblock.unuserver.packets.out.round.*;
 import de.placeblock.unuserver.player.Inventory;
 import de.placeblock.unuserver.player.Player;
 
 import java.util.List;
-import java.util.UUID;
 
 public abstract class PacketPlayer extends Player {
-    public PacketPlayer(UUID uuid, String name) {
-        super(uuid, name);
-    }
-
     protected abstract void send(OutPacket packet);
 
     protected void onReceive(InPacket packet) {
@@ -89,8 +85,13 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void sendOwnPlayerData(Player player) {
+    public void setOwnPlayerData(Player player) {
         this.send(new OwnPlayerDataOutPacket(player));
+    }
+
+    @Override
+    public void setPlayerName(Player player, String name) {
+        this.send(new PlayerNameOutPacket(player.getUuid(), name));
     }
 
     @Override
@@ -111,11 +112,6 @@ public abstract class PacketPlayer extends Player {
     @Override
     public void setRoomData(Room.RoomData roomData) {
         this.send(new RoomDataOutPacket(roomData));
-    }
-
-    @Override
-    public void setRoundData(Round.RoundData roundData) {
-        this.send(new RoundDataOutPacket(roundData));
     }
 
     @Override

@@ -49,6 +49,10 @@ public class Room {
         this.executeForPlayers(p -> p.setRoundSettings(this.roundSettings));
     }
 
+    public void updateLeaderboard() {
+        this.executeForPlayers(p -> p.setLeaderboard(this.leaderboard));
+    }
+
     public void addPlayer(Player player) {
         this.players.add(player);
         player.setRoomData(RoomData.fromRoom(this));

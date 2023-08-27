@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class BotPlayer extends Player {
-    public BotPlayer(UUID uuid, String name) {
-        super(uuid, name);
+    public BotPlayer(UUID uuid) {
+        super(uuid);
     }
 
     @Override
@@ -93,17 +93,17 @@ public class BotPlayer extends Player {
     }
 
     @Override
-    public void setRoundData(Round.RoundData roundData) {
-
-    }
-
-    @Override
     public void setCreatedRoomCode(int code) {
 
     }
 
     @Override
-    public void sendOwnPlayerData(Player player) {
+    public void setOwnPlayerData(Player player) {
+
+    }
+
+    @Override
+    public void setPlayerName(Player player, String name) {
 
     }
 }

@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class JoinRoomInPacket extends InPacket {
-
-    private final String name;
     private final int code;
 
     @Override

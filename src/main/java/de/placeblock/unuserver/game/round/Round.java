@@ -41,6 +41,7 @@ public class Round {
         for (RoundPlayer player : this.players) {
             List<Card> cards = this.drawCards(roundSettings.getStartCardAmount());
             player.getInventory().addCards(cards);
+            player.getPlayer().setInventory(player.getInventory());
         }
     }
 
