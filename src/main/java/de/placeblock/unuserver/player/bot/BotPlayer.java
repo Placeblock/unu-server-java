@@ -10,8 +10,8 @@ import de.placeblock.unuserver.player.Inventory;
 import de.placeblock.unuserver.player.Player;
 
 import java.util.List;
-import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class BotPlayer extends Player {
     @Override
     public void setRoundSettings(RoundSettings roundSettings) {

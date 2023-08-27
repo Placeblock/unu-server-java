@@ -99,6 +99,7 @@ public class Round {
         // Players that didn't say UNO before the next player places a card get punished
         this.punishNotAcknowledgedPlayers();
         this.placeCard(card);
+        roundPlayer.incPlacedCards();
         roundPlayer.getInventory().removeCard(card);
 
         if (roundPlayer.getInventory().size() == 0) {

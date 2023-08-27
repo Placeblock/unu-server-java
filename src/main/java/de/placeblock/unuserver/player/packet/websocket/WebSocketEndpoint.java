@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebSocket
+@SuppressWarnings({"unused", "RedundantThrows"})
 public class WebSocketEndpoint {
     public static final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<Session, WebSocketPlayer> players = new HashMap<>();

@@ -14,6 +14,7 @@ public class InPacketRegistry {
     static {
         inPackets.put("player_name", PlayerNameInPacket.class);
         inPackets.put("card_stack", CardStackInPacket.class);
+        inPackets.put("create_room", CreateRoomInPacket.class);
         inPackets.put("join_room", JoinRoomInPacket.class);
         inPackets.put("kick_room_player", KickRoomPlayerInPacket.class);
         inPackets.put("leave_room", LeaveRoomInPacket.class);

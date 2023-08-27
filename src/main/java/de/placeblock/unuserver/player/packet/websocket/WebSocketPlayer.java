@@ -6,7 +6,6 @@ import de.placeblock.unuserver.packets.out.OutPacket;
 import de.placeblock.unuserver.packets.out.player.OwnPlayerDataOutPacket;
 import de.placeblock.unuserver.player.packet.PacketPlayer;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 
@@ -26,7 +25,6 @@ public class WebSocketPlayer extends PacketPlayer {
 
     @Override
     protected void send(OutPacket packet) {
-        OutMessage outMessage = new OutMessage(packet.getAction(), packet);
         try {
             String serialized = WebSocketEndpoint.objectMapper.writeValueAsString(packet);
             RemoteEndpoint basicRemote = this.session.getRemote();
@@ -34,12 +32,5 @@ public class WebSocketPlayer extends PacketPlayer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    private static class OutMessage {
-        private final String action;
-        private final OutPacket data;
     }
 }
