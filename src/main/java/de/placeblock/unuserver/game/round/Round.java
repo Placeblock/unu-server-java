@@ -7,6 +7,7 @@ import de.placeblock.unuserver.cards.Color;
 import de.placeblock.unuserver.cards.DrawStackApplier;
 import de.placeblock.unuserver.cards.impl.NumberCard;
 import de.placeblock.unuserver.game.Room;
+import de.placeblock.unuserver.game.round.move.Move;
 import de.placeblock.unuserver.player.Inventory;
 import de.placeblock.unuserver.player.Player;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public class Round {
     private int drawStack = 0;
     @Setter
     private int nextPlayerDelta = 1;
-    private boolean hasPlayerDrawnCard = false;
+    private Move currentMove;
 
     public Round(Room room, RoundSettings roundSettings, List<Player> players, List<Card<?>> cardStack) {
         Main.LOGGER.info("Creating Round for Room " + room.getCode());
