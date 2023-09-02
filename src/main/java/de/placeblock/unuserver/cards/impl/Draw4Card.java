@@ -6,11 +6,15 @@ import de.placeblock.unuserver.cards.Color;
 import de.placeblock.unuserver.cards.Colored;
 import de.placeblock.unuserver.cards.ForceColorCard;
 import de.placeblock.unuserver.game.round.Round;
+import de.placeblock.unuserver.game.round.move.Move;
+import de.placeblock.unuserver.packets.in.round.SelectColorInPacket;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonTypeName("draw_4")
@@ -28,6 +32,13 @@ public class Draw4Card extends Card<Draw4Card> implements ForceColorCard {
     @Override
     public void place(Round round) {
         round.setDrawStack(round.getDrawStack()+4);
+        Move currentMove = round.getCurrentMove();
+        currentMove.registerPacketHandler(SelectColorInPacket.class, packet -> {
+            this.setForceColor(packet.getColor());
+            round.getRoom().executeForPlayers(p -> p.setCurrentCard(this));
+            round.setNextPlayer(round.calculateNextPlayer());
+        });
+        currentMove.getRoundPlayer().getPlayer().selectColor();
     }
 
     @Override

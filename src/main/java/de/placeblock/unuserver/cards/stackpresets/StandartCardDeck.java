@@ -15,13 +15,13 @@ public class StandartCardDeck extends CardDeck {
             colorGroup.addCard(new SuspendCard(color));
             colorGroup.addCard(new InvertDirectionCard(color));
             colorGroup.addCard(new Draw2Card(color));
-            colorGroup.setAmount(2);
+            colorGroup.setAmount(4);
             this.getGroups().add(colorGroup);
         }
         CardGroup specialGroup = new CardGroup();
         specialGroup.addCard(new Draw4Card());
         specialGroup.addCard(new WishCard());
-        specialGroup.setAmount(4);
+        specialGroup.setAmount(8);
         this.getGroups().add(specialGroup);
     }
 

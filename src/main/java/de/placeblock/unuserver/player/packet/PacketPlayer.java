@@ -56,8 +56,8 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setPlacedCard(Card<?> card) {
-        this.send(new PlayCardOutPacket(card));
+    public void setCurrentCard(Card<?> card) {
+        this.send(new CurrentCardOutPacket(card));
     }
 
     @Override
@@ -153,5 +153,10 @@ public abstract class PacketPlayer extends Player {
     @Override
     public void setCardDeckPresets() {
         this.send(new CardDeckPresetsOutPacket());
+    }
+
+    @Override
+    public void selectColor() {
+        this.send(new SelectColorOutPacket());
     }
 }

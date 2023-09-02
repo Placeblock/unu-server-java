@@ -2,9 +2,9 @@ package de.placeblock.unuserver.game.round;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.placeblock.unuserver.Main;
+import de.placeblock.unuserver.Util;
 import de.placeblock.unuserver.cards.Card;
 import de.placeblock.unuserver.cards.Color;
-import de.placeblock.unuserver.cards.DrawStackApplier;
 import de.placeblock.unuserver.cards.impl.NumberCard;
 import de.placeblock.unuserver.game.Room;
 import de.placeblock.unuserver.game.round.move.Move;
@@ -23,7 +23,6 @@ public class Round {
     private final Room room;
     private final List<RoundPlayer> players = new ArrayList<>();
     private final RoundSettings roundSettings;
-    private RoundPlayer currentPlayer;
     // Players who have to shout "UNO!"
     private final List<RoundPlayer> acknowledgeLastCardPlayers = new ArrayList<>();
     private final LinkedList<Card<?>> cardStack = new LinkedList<>();
@@ -31,7 +30,7 @@ public class Round {
     private int placedCardsAll = 0;
     private int drawStack = 0;
     @Setter
-    private int nextPlayerDelta = 1;
+    private int direction = 1;
     private Move currentMove;
 
     public Round(Room room, RoundSettings roundSettings, List<Player> players, List<Card<?>> cardStack) {
@@ -45,7 +44,7 @@ public class Round {
             this.players.add(roundPlayer);
         }
         int randomPlayerIndex = (int) (Math.random() * this.players.size());
-        this.currentPlayer = this.players.get(randomPlayerIndex);
+        this.currentMove = new Move(this, this.players.get(randomPlayerIndex));
         Collections.shuffle(cardStack);
         this.cardStack.addAll(cardStack);
         this.placedCards.add(this.getBeginningCard());
@@ -81,16 +80,20 @@ public class Round {
         }
     }
 
+    public RoundPlayer getCurrentPlayer() {
+        return this.currentMove.getRoundPlayer();
+    }
+
     // PLAYER MANAGEMENT
 
     public RoundPlayer calculateNextPlayer(int nextPlayerDelta) {
-        int currentPlayerIndex = this.players.indexOf(this.currentPlayer);
-        int newPlayerIndex = (currentPlayerIndex + nextPlayerDelta) % this.players.size();
+        int currentPlayerIndex = this.players.indexOf(this.currentMove.getRoundPlayer());
+        int newPlayerIndex = Util.modulo(currentPlayerIndex + nextPlayerDelta, this.players.size());
         return this.players.get(newPlayerIndex);
     }
 
     public RoundPlayer calculateNextPlayer() {
-        return this.calculateNextPlayer(this.nextPlayerDelta);
+        return this.calculateNextPlayer(this.currentMove.getNextPlayerDelta()*this.direction);
     }
 
     public void removePlayer(RoundPlayer roundPlayer, RemovePlayerReason reason) {
@@ -101,7 +104,7 @@ public class Round {
             return;
         }
         this.room.executeForPlayers(p -> p.removeRoundPlayer(roundPlayer, reason));
-        if (this.currentPlayer.equals(roundPlayer)) {
+        if (this.getCurrentPlayer().equals(roundPlayer)) {
             this.setNextPlayer(this.calculateNextPlayer());
         }
     }
@@ -117,8 +120,8 @@ public class Round {
     }
 
     public void setNextPlayer(RoundPlayer player) {
-        this.currentPlayer = player;
-        this.room.executeForPlayers(p -> p.setCurrentPlayer(this.currentPlayer));
+        this.currentMove = new Move(this, player);
+        this.room.executeForPlayers(p -> p.setCurrentPlayer(this.getCurrentPlayer()));
     }
 
     // CARD MANAGEMENT
@@ -129,30 +132,25 @@ public class Round {
 
     public void placeCard(RoundPlayer roundPlayer, UUID cardUUID) {
         Card<?> card = roundPlayer.getInventory().getCard(cardUUID);
-        if (card == null ||
-            !this.currentPlayer.equals(roundPlayer) ||
-            !this.canPlaceCard(card)) return;
+        if (card == null || !this.canPlaceCard(card)) return;
         // Players that didn't say UNO before the next player places a card get punished
         this.punishNotAcknowledgedPlayers();
-        this.placeCard(card);
-        if (card instanceof DrawStackApplier) {
-            this.applyDrawStack(roundPlayer);
-        }
         roundPlayer.getPlayer().removeCard(cardUUID);
         roundPlayer.getInventory().removeCard(card);
         roundPlayer.incPlacedCards();
+
+        if (roundPlayer.getInventory().size() == 1) {
+            this.acknowledgeLastCardPlayers.add(roundPlayer);
+        }
 
         if (roundPlayer.getInventory().size() == 0) {
             this.removePlayer(roundPlayer, RemovePlayerReason.WON);
         }
 
-        this.setNextPlayer(this.calculateNextPlayer());
+        this.placeCard(card);
     }
 
     public void drawCard(RoundPlayer roundPlayer) {
-        if (!this.currentPlayer.equals(roundPlayer) ||
-            this.hasPlayerDrawnCard) return;
-        this.hasPlayerDrawnCard = true;
         // Players that didn't say UNO before the next player draws a card get punished
         this.punishNotAcknowledgedPlayers();
         this.applyDrawStack(roundPlayer);
@@ -175,6 +173,10 @@ public class Round {
             drawnCards.add(this.drawCard());
         }
         return drawnCards;
+    }
+
+    public void applyDrawStack() {
+        this.applyDrawStack(this.currentMove.getRoundPlayer());
     }
 
     public void applyDrawStack(RoundPlayer roundPlayer) {
@@ -203,11 +205,11 @@ public class Round {
     }
 
     public void placeCard(Card<?> card) {
-        card.place(this);
         this.placedCards.add(card);
-        this.room.executeForPlayers(p -> p.setPlacedCard(card));
+        this.room.executeForPlayers(p -> p.setCurrentCard(card));
         // Only for statistics
         this.placedCardsAll++;
+        card.place(this);
     }
 
     public void acknowledgeLastCard(RoundPlayer player) {
@@ -220,12 +222,14 @@ public class Round {
      */
     private void punishNotAcknowledgedPlayers() {
         for (RoundPlayer roundPlayer : this.acknowledgeLastCardPlayers) {
-            List<Card<?>> drawnCards = this.drawCards(2);
+            int punishment = this.getRoundSettings().getNoLastCardAckPunishment();
+            List<Card<?>> drawnCards = this.drawCards(punishment);
             for (Card<?> drawnCard : drawnCards) {
                 roundPlayer.getInventory().addCard(drawnCard);
                 roundPlayer.getPlayer().addCard(drawnCard, AddCardReason.NO_LAST_CARD_ACKNOWLEDGE);
             }
         }
+        this.acknowledgeLastCardPlayers.clear();
     }
 
 
