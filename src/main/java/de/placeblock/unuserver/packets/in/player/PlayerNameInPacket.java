@@ -2,13 +2,14 @@ package de.placeblock.unuserver.packets.in.player;
 
 import de.placeblock.unuserver.packets.in.InPacket;
 import de.placeblock.unuserver.player.Player;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlayerNameInPacket extends InPacket {
-    private final String name;
+    private String name;
 
     @Override
     public void onReceive(Player player) {

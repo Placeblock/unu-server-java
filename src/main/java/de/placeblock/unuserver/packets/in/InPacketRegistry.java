@@ -1,5 +1,8 @@
 package de.placeblock.unuserver.packets.in;
 
+import de.placeblock.unuserver.packets.in.chat.DeleteMessageInPacket;
+import de.placeblock.unuserver.packets.in.chat.MessageInPacket;
+import de.placeblock.unuserver.packets.in.chat.QuickReactionInPacket;
 import de.placeblock.unuserver.packets.in.player.PlayerNameInPacket;
 import de.placeblock.unuserver.packets.in.room.*;
 import de.placeblock.unuserver.packets.in.round.*;
@@ -13,7 +16,7 @@ public class InPacketRegistry {
 
     static {
         inPackets.put("player_name", PlayerNameInPacket.class);
-        inPackets.put("card_stack", CardStackInPacket.class);
+        inPackets.put("card_deck", CardDeckInPacket.class);
         inPackets.put("create_room", CreateRoomInPacket.class);
         inPackets.put("join_room", JoinRoomInPacket.class);
         inPackets.put("kick_room_player", KickRoomPlayerInPacket.class);
@@ -25,6 +28,10 @@ public class InPacketRegistry {
         inPackets.put("kick_round_player", KickRoundPlayerInPacket.class);
         inPackets.put("leave_round", LeaveRoundInPacket.class);
         inPackets.put("place_card", PlaceCardInPacket.class);
+        inPackets.put("delete_message", DeleteMessageInPacket.class);
+        inPackets.put("message", MessageInPacket.class);
+        inPackets.put("quick_reaction", QuickReactionInPacket.class);
+        inPackets.put("card_deck_preset", CardDeckPresetInPacket.class);
     }
 
     public static Class<? extends InPacket> getPacketClass(String action) {

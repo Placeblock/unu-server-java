@@ -1,10 +1,17 @@
 package de.placeblock.unuserver.game.round;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RoundSettings {
-    private final int startCardAmount;
+    private int startCardAmount;
+    private boolean plus4OnPlus4;
+    private boolean plus2OnPlus4;
+    private boolean plus4OnPlus2;
+    private boolean wishOnPlus4;
+    private boolean plus4OnWish;
+    private boolean wishOnWish;
 }

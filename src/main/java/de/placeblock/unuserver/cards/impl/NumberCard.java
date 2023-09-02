@@ -1,32 +1,51 @@
 package de.placeblock.unuserver.cards.impl;
 
-import de.placeblock.unuserver.cards.Card;
-import de.placeblock.unuserver.cards.Color;
-import de.placeblock.unuserver.cards.Colored;
-import de.placeblock.unuserver.cards.Numbered;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.placeblock.unuserver.cards.*;
 import de.placeblock.unuserver.game.round.Round;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
-public class NumberCard extends Card implements Colored, Numbered {
+@JsonTypeName("number")
+public class NumberCard extends Card<NumberCard> implements Colored, Numbered, DrawStackApplier {
     protected final int number;
     protected final Color color;
 
-    public NumberCard(UUID uuid, int number, Color color) {
-        super(uuid);
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public NumberCard(@JsonProperty("number") int number, @JsonProperty("color") Color color) {
         this.number = number;
         this.color = color;
     }
 
     @Override
-    public boolean isValidNextCard(Card card) {
-        return false;
+    public boolean isValidNextCard(Round round, Card<?> card) {
+        if (card instanceof Colored || card instanceof Numbered) {
+            if (card instanceof Numbered numbered) {
+                System.out.println("---------");
+                System.out.println(this.number);
+                System.out.println(numbered.getNumber());
+            }
+            if (card instanceof Colored colored && this.color == colored.getColor()) {
+                return true;
+            } else return card instanceof Numbered numbered && this.number == numbered.getNumber();
+        }
+        return true;
     }
 
     @Override
     public void place(Round round) {
 
+    }
+
+    @Override
+    public boolean canBeginWith() {
+        return true;
+    }
+
+    @Override
+    public NumberCard copy() {
+        return new NumberCard(this.number, this.color);
     }
 }

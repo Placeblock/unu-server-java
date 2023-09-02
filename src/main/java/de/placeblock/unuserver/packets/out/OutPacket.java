@@ -8,7 +8,7 @@ public abstract class OutPacket implements Packet {
         String className = this.getClass().getSimpleName();
         String packetName = className.substring(0, className.length()-9);
         String[] words = packetName.split("(?=\\p{Upper})");
-        return String.join("_", words);
+        return String.join("_", words).toLowerCase();
     }
 
 }

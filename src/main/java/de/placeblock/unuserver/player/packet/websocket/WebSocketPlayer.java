@@ -3,7 +3,6 @@ package de.placeblock.unuserver.player.packet.websocket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.placeblock.unuserver.Main;
 import de.placeblock.unuserver.packets.out.OutPacket;
-import de.placeblock.unuserver.packets.out.player.OwnPlayerDataOutPacket;
 import de.placeblock.unuserver.player.packet.PacketPlayer;
 import lombok.Getter;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
@@ -20,11 +19,11 @@ public class WebSocketPlayer extends PacketPlayer {
         Main.LOGGER.info("New WebSocketPlayer");
         this.session = session;
         this.setOwnPlayerData();
-        this.send(new OwnPlayerDataOutPacket(this));
     }
 
     @Override
     protected void send(OutPacket packet) {
+        if (!this.session.isOpen()) return;
         try {
             String serialized = WebSocketEndpoint.objectMapper.writeValueAsString(packet);
             RemoteEndpoint basicRemote = this.session.getRemote();

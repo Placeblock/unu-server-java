@@ -4,6 +4,7 @@ package de.placeblock.unuserver.player.packet.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import de.placeblock.unuserver.packets.in.InPacket;
 import de.placeblock.unuserver.packets.in.InPacketRegistry;
 import de.placeblock.unuserver.player.Player;
@@ -18,6 +19,9 @@ import java.util.Map;
 @SuppressWarnings({"unused", "RedundantThrows"})
 public class WebSocketEndpoint {
     public static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+    }
     private final Map<Session, WebSocketPlayer> players = new HashMap<>();
 
     @OnWebSocketConnect
@@ -28,13 +32,17 @@ public class WebSocketEndpoint {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
+        if (message.equals("ping")) {
+            session.getRemote().sendString("pong");
+            return;
+        }
         Player player = this.players.get(session);
         if (player == null) return;
         try {
             JsonNode jsonNode = objectMapper.readTree(message);
             JsonNode actionNode = jsonNode.get("action");
             if (actionNode.isNull()) return;
-            String action = actionNode.asText();
+            String action = actionNode.textValue();
             Class<? extends InPacket> packetClass = InPacketRegistry.getPacketClass(action);
             if (packetClass == null) return;
             JsonNode dataNode = jsonNode.get("data");
@@ -43,7 +51,14 @@ public class WebSocketEndpoint {
             if (inPacket == null) return;
             inPacket.onReceive(player);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            for (StackTraceElement element : e.getStackTrace()) {
+                System.out.println(element);
+            }
+            System.out.println("THERE WAS AN JSON EXCEPTION");
+        } catch (RuntimeException e) {
+            for (StackTraceElement element : e.getStackTrace()) {
+                System.out.println(element);
+            }
         }
     }
 
@@ -55,10 +70,11 @@ public class WebSocketEndpoint {
     }
 
     @OnWebSocketError
-    public void onError(Session session, Throwable throwable) {
+    public void onError(Session session, Throwable throwable) throws Throwable {
         Player player = this.players.remove(session);
         if (player != null) {
             player.remove();
         }
+        throw throwable;
     }
 }

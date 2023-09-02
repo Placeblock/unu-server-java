@@ -1,6 +1,9 @@
 package de.placeblock.unuserver.player.packet;
 
 import de.placeblock.unuserver.cards.Card;
+import de.placeblock.unuserver.cards.CardDeck;
+import de.placeblock.unuserver.communication.Message;
+import de.placeblock.unuserver.communication.QuickReaction;
 import de.placeblock.unuserver.game.Leaderboard;
 import de.placeblock.unuserver.game.Room;
 import de.placeblock.unuserver.game.round.Round;
@@ -10,6 +13,9 @@ import de.placeblock.unuserver.packets.in.InPacket;
 import de.placeblock.unuserver.packets.in.room.RoomRequiredPacket;
 import de.placeblock.unuserver.packets.in.round.RoundRequiredPacket;
 import de.placeblock.unuserver.packets.out.OutPacket;
+import de.placeblock.unuserver.packets.out.communication.DeleteMessageOutPacket;
+import de.placeblock.unuserver.packets.out.communication.MessageOutPacket;
+import de.placeblock.unuserver.packets.out.communication.QuickReactionOutPacket;
 import de.placeblock.unuserver.packets.out.player.OwnPlayerDataOutPacket;
 import de.placeblock.unuserver.packets.out.player.PlayerDataOutPacket;
 import de.placeblock.unuserver.packets.out.player.PlayerNameOutPacket;
@@ -18,7 +24,7 @@ import de.placeblock.unuserver.packets.out.round.*;
 import de.placeblock.unuserver.player.Inventory;
 import de.placeblock.unuserver.player.Player;
 
-import java.util.List;
+import java.util.UUID;
 
 public abstract class PacketPlayer extends Player {
     protected abstract void send(OutPacket packet);
@@ -35,8 +41,8 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setCardStack(List<Card> cardStack) {
-
+    public void setCardDeck(CardDeck cardDeck) {
+        this.send(new CardDeckOutPacket(cardDeck));
     }
 
     @Override
@@ -50,7 +56,7 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setPlacedCard(Card card) {
+    public void setPlacedCard(Card<?> card) {
         this.send(new PlayCardOutPacket(card));
     }
 
@@ -65,8 +71,8 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void confirmDrawnCard(Card card, Round.DrawReason reason) {
-        this.send(new DrawCardOutPacket(card, reason));
+    public void addCard(Card<?> card, Round.AddCardReason reason) {
+        this.send(new AddCardOutPacket(card, reason));
     }
 
     @Override
@@ -95,7 +101,22 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setLeaderboard(Leaderboard leaderboard) {
+    public void deleteMessage(UUID message) {
+        this.send(new DeleteMessageOutPacket(message));
+    }
+
+    @Override
+    public void sendMessage(Message message) {
+        this.send(new MessageOutPacket(message));
+    }
+
+    @Override
+    public void sendQuickReaction(Player player, QuickReaction reaction) {
+        this.send(new QuickReactionOutPacket(player.getUuid(), reaction));
+    }
+
+    @Override
+    public void updateLeaderboard(Leaderboard leaderboard) {
         this.send(new LeaderboardOutPacket(leaderboard));
     }
 
@@ -115,7 +136,22 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setCreatedRoomCode(int code) {
-        this.send(new CreatedRoomOutPacket(code));
+    public void setOwner(UUID owner) {
+        this.send(new RoomOwnerOutPacket(owner));
+    }
+
+    @Override
+    public void setRoundData(Round.RoundData roomData) {
+        this.send(new RoundDataOutPacket(roomData));
+    }
+
+    @Override
+    public void removeCard(UUID uuid) {
+        this.send(new RemoveCardOutPacket(uuid));
+    }
+
+    @Override
+    public void setCardDeckPresets() {
+        this.send(new CardDeckPresetsOutPacket());
     }
 }

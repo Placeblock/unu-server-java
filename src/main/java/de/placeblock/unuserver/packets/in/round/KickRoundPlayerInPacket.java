@@ -5,15 +5,16 @@ import de.placeblock.unuserver.game.round.RoundPlayer;
 import de.placeblock.unuserver.packets.PlayerPacket;
 import de.placeblock.unuserver.packets.in.InPacket;
 import de.placeblock.unuserver.player.Player;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class KickRoundPlayerInPacket extends InPacket implements PlayerPacket, RoundRequiredPacket {
-    private final UUID player;
+    private UUID player;
 
     @Override
     public void onReceive(Player player) {
