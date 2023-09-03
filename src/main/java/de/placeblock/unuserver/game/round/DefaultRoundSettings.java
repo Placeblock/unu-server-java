@@ -9,7 +9,8 @@ public class DefaultRoundSettings extends RoundSettings{
                 true,
                 true,
                 true,
-                true);
+                true,
+                false);
 
         // Bei 7 Karten von ausgewähltem Spieler mit eigenen Tauschen
 

@@ -22,12 +22,11 @@ public class Move {
     private final Map<Class<? extends InPacket>, Consumer<InPacket>> packetHandlers = new HashMap<>();
     private boolean hasDrawnCard = false;
     @Setter
-    private int nextPlayerDelta;
+    private int nextPlayerDelta = 1;
 
     public Move(Round round, RoundPlayer roundPlayer) {
         this.round = round;
         this.roundPlayer = roundPlayer;
-        this.nextPlayerDelta = round.getDirection();
         this.registerPacketHandler(DrawCardInPacket.class, packet -> {
             if (this.hasDrawnCard) return;
             this.round.drawCard(roundPlayer);

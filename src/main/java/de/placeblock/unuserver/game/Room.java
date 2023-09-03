@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 @Getter
 @RequiredArgsConstructor
 public class Room {
-    private final int code;
+    private final String code;
     private final Chat chat = new Chat(this);
     private UUID owner;
     private final List<Player> players = new ArrayList<>();
@@ -117,7 +117,7 @@ public class Room {
     @Getter
     @RequiredArgsConstructor
     public static class RoomData {
-        private final int code;
+        private final String code;
         private final List<Player> players;
         private final UUID owner;
         private final Chat chat;

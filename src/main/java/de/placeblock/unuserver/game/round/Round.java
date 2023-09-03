@@ -155,8 +155,12 @@ public class Round {
         this.punishNotAcknowledgedPlayers();
         this.applyDrawStack(roundPlayer);
         Card<?> card = this.drawCard();
-        roundPlayer.getInventory().addCard(card);
+        Inventory inventory = roundPlayer.getInventory();
+        inventory.addCard(card);
         roundPlayer.getPlayer().addCard(card, AddCardReason.DRAW);
+        if (this.roundSettings.isAutoNextNoChoice() && !inventory.canPlay(this, this.getCurrentCard())) {
+            this.setNextPlayer(this.calculateNextPlayer());
+        }
     }
 
     public Card<?> drawCard() {
@@ -213,8 +217,10 @@ public class Round {
     }
 
     public void acknowledgeLastCard(RoundPlayer player) {
-        this.acknowledgeLastCardPlayers.remove(player);
-        this.room.executeForPlayers(p -> p.showPlayerAcknowledgeLastCard(player));
+        if (this.acknowledgeLastCardPlayers.contains(player)) {
+            this.acknowledgeLastCardPlayers.remove(player);
+            this.room.executeForPlayers(p -> p.showPlayerAcknowledgeLastCard(player));
+        }
     }
 
     /**

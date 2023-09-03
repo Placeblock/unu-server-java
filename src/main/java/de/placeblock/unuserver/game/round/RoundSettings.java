@@ -16,4 +16,5 @@ public class RoundSettings {
     private boolean plus4OnWish;
     private boolean wishOnWish;
     private boolean skipOnInverse2Players;
+    private boolean autoNextNoChoice;
 }

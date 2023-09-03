@@ -25,11 +25,11 @@ public class Chat {
         this.room.executeForPlayers(p -> p.sendMessage(message));
     }
 
-    public void deleteMessage(UUID messageUUID) {
+    public void deleteMessage(UUID messageUUID, UUID sender) {
         Iterator<Message> iter = this.messages.iterator();
         while(iter.hasNext()){
             Message next = iter.next();
-            if(next.getUuid().equals(messageUUID)){
+            if(next.getUuid().equals(messageUUID) && next.getSender().equals(sender)){
                 iter.remove();
                 this.room.executeForPlayers(p -> p.deleteMessage(next.getUuid()));
             }
