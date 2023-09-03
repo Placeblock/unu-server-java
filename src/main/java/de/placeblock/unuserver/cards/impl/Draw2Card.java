@@ -21,13 +21,15 @@ public class Draw2Card extends Card<Draw2Card> implements Colored {
 
     @Override
     public boolean isValidNextCard(Round round, Card<?> card) {
-        if (card instanceof Colored colored && this.color == colored.getColor()) return true;
+        if ((card instanceof Colored colored && this.color == colored.getColor()) ||
+            card instanceof Draw2Card) return true;
         return card instanceof Draw4Card && round.getRoundSettings().isPlus4OnPlus2();
     }
 
     @Override
     public void place(Round round) {
         round.setDrawStack(round.getDrawStack()+2);
+        round.setNextPlayer(round.calculateNextPlayer());
     }
 
     @Override

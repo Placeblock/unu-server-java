@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JoinRoomInPacket extends InPacket {
-    private int code;
+    private String code;
 
     @Override
     public void onReceive(Player player) {

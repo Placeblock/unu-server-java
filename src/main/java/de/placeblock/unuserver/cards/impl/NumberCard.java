@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @JsonTypeName("number")
-public class NumberCard extends Card<NumberCard> implements Colored, Numbered, DrawStackApplier {
+public class NumberCard extends Card<NumberCard> implements Colored, Numbered {
     protected final int number;
     protected final Color color;
 
@@ -22,11 +22,6 @@ public class NumberCard extends Card<NumberCard> implements Colored, Numbered, D
     @Override
     public boolean isValidNextCard(Round round, Card<?> card) {
         if (card instanceof Colored || card instanceof Numbered) {
-            if (card instanceof Numbered numbered) {
-                System.out.println("---------");
-                System.out.println(this.number);
-                System.out.println(numbered.getNumber());
-            }
             if (card instanceof Colored colored && this.color == colored.getColor()) {
                 return true;
             } else return card instanceof Numbered numbered && this.number == numbered.getNumber();
@@ -36,7 +31,8 @@ public class NumberCard extends Card<NumberCard> implements Colored, Numbered, D
 
     @Override
     public void place(Round round) {
-
+        round.applyDrawStack();
+        round.setNextPlayer(round.calculateNextPlayer());
     }
 
     @Override

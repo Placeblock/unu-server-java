@@ -14,13 +14,11 @@ public class CardDeckInPacket extends InPacket implements RoomRequiredPacket {
 
     @Override
     public void onReceive(Player player) {
-        System.out.println("ON RECEIVE");
         if (this.cardDeck.getGroups().size() > 30) return;
         for (CardDeck.CardGroup group : this.cardDeck.getGroups()) {
             if (group.getCards().size() > 80 ||
                 group.getAmount() > 100) return;
         }
-        System.out.println("ON RECEIVE 2");
         player.getRoom().setCardDeck(this.cardDeck);
     }
 }

@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class PlayCardOutPacket extends OutPacket {
+public class CurrentCardOutPacket extends OutPacket {
     private final Card<?> card;
 }

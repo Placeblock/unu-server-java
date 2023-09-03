@@ -17,6 +17,6 @@ public class DeleteMessageInPacket extends InPacket implements RoomRequiredPacke
     @Override
     public void onReceive(Player player) {
         Chat chat = player.getRoom().getChat();
-        chat.deleteMessage(this.uuid);
+        chat.deleteMessage(this.uuid, player.getUuid());
     }
 }
