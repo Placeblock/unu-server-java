@@ -66,4 +66,5 @@ public abstract class Player {
     public abstract void removeCard(UUID uuid);
     public abstract void setCardDeckPresets();
     public abstract void selectColor();
+    public abstract void sendWon();
 }

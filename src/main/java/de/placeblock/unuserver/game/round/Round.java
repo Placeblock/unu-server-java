@@ -99,7 +99,9 @@ public class Round {
     public void removePlayer(RoundPlayer roundPlayer, RemovePlayerReason reason) {
         this.players.remove(roundPlayer);
         if (this.players.size() == 1) {
-            this.room.getLeaderboard().addWin(this.players.get(0).getPlayer());
+            Player wonPlayer = this.players.get(0).getPlayer();
+            wonPlayer.sendWon();
+            this.room.getLeaderboard().addWin(wonPlayer);
             this.room.endRound();
             return;
         }

@@ -156,6 +156,11 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
+    public void sendWon() {
+        this.send(new PlayerWonOutPacket());
+    }
+
+    @Override
     public void selectColor() {
         this.send(new SelectColorOutPacket());
     }
