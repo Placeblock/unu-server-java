@@ -98,10 +98,12 @@ public class Round {
 
     public void removePlayer(RoundPlayer roundPlayer, RemovePlayerReason reason) {
         this.players.remove(roundPlayer);
+        if (reason == RemovePlayerReason.WON) {
+            roundPlayer.getPlayer().sendWon();
+        }
         if (this.players.size() == 1) {
-            Player wonPlayer = this.players.get(0).getPlayer();
-            wonPlayer.sendWon();
-            this.room.getLeaderboard().addWin(wonPlayer);
+            Player removedPlayer = this.players.get(0).getPlayer();
+            this.room.getLeaderboard().addWin(removedPlayer);
             this.room.endRound();
             return;
         }
