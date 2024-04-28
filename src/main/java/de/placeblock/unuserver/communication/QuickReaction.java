@@ -9,7 +9,11 @@ public enum QuickReaction {
     ANGRY("\uD83E\uDD2C"),
     FUNNY("\uD83D\uDE06"),
     TONGUE("\uD83D\uDE1B"),
-    SAD("\uD83D\uDE22");
+    SAD("\uD83D\uDE22"),
+    SHAKING("\uD83E\uDEE8"),
+    BORED("\uD83D\uDE12"),
+    INSPECTING("\uD83E\uDDD0"),
+    QUIET("\uD83D\uDE11");
 
     private final String emoji;
 

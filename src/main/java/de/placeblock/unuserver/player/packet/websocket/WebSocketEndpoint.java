@@ -36,7 +36,7 @@ public class WebSocketEndpoint {
             session.getRemote().sendString("pong");
             return;
         }
-        Player player = this.players.get(session);
+        WebSocketPlayer player = this.players.get(session);
         if (player == null) return;
         try {
             JsonNode jsonNode = objectMapper.readTree(message);
@@ -49,7 +49,7 @@ public class WebSocketEndpoint {
             if (dataNode.isNull()) return;
             InPacket inPacket = objectMapper.treeToValue(dataNode, packetClass);
             if (inPacket == null) return;
-            inPacket.onReceive(player);
+            player.onReceive(inPacket);
         } catch (JsonProcessingException e) {
             for (StackTraceElement element : e.getStackTrace()) {
                 System.out.println(element);

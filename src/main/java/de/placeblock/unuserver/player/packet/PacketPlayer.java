@@ -29,7 +29,7 @@ import java.util.UUID;
 public abstract class PacketPlayer extends Player {
     protected abstract void send(OutPacket packet);
 
-    protected void onReceive(InPacket packet) {
+    public void onReceive(InPacket packet) {
         if (packet instanceof RoomRequiredPacket && this.getRoom() == null ||
             packet instanceof RoundRequiredPacket && this.getRoom().getRound() == null) return;
         packet.onReceive(this);
