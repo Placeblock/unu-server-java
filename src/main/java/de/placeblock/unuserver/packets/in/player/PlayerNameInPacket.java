@@ -13,6 +13,8 @@ public class PlayerNameInPacket extends InPacket {
 
     @Override
     public void onReceive(Player player) {
+        this.name = this.name.trim();
+        if (this.name.equalsIgnoreCase("")) return;
         player.setName(this.name);
     }
 }
