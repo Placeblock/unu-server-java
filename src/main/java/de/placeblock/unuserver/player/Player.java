@@ -67,4 +67,5 @@ public abstract class Player {
     public abstract void setCardDeckPresets();
     public abstract void selectColor();
     public abstract void sendWon();
+    public abstract void sendInvalidRoom();
 }

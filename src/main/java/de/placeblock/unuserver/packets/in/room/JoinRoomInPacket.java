@@ -17,7 +17,10 @@ public class JoinRoomInPacket extends InPacket {
     @Override
     public void onReceive(Player player) {
         Room room = Main.getRoomManager().getRoom(this.code);
-        if (room == null) return;
+        if (room == null) {
+            player.sendInvalidRoom();
+            return;
+        }
         room.addPlayer(player);
     }
 }
