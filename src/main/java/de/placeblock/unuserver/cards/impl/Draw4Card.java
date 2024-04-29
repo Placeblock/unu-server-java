@@ -32,6 +32,7 @@ public class Draw4Card extends Card<Draw4Card> implements ForceColorCard {
     @Override
     public void place(Round round) {
         round.setDrawStack(round.getDrawStack()+4);
+        round.getRoom().getLeaderboard().addPoints(round.getCurrentPlayer().getPlayer(), round.getDrawStack());
         Move currentMove = round.getCurrentMove();
         currentMove.registerPacketHandler(SelectColorInPacket.class, packet -> {
             this.setForceColor(packet.getColor());

@@ -29,6 +29,7 @@ public class Draw2Card extends Card<Draw2Card> implements Colored {
     @Override
     public void place(Round round) {
         round.setDrawStack(round.getDrawStack()+2);
+        round.getRoom().getLeaderboard().addPoints(round.getCurrentPlayer().getPlayer(), round.getDrawStack());
         round.setNextPlayer(round.calculateNextPlayer());
     }
 

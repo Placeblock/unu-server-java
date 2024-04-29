@@ -88,7 +88,7 @@ public class Room {
         this.players.remove(player);
         this.executeForPlayers(p -> p.removeRoomPlayer(player, kicked));
 
-        if (this.players.size() == 0) {
+        if (this.players.isEmpty()) {
             Main.getRoomManager().removeRoom(this);
             return;
         }

@@ -21,6 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Round {
     @JsonIgnore
     private final Room room;
+    private final int playersAmount;
     private final List<RoundPlayer> players = new ArrayList<>();
     private final RoundSettings roundSettings;
     // Players who have to shout "UNO!"
@@ -43,6 +44,7 @@ public class Round {
             roundPlayer.setInventory(inventory);
             this.players.add(roundPlayer);
         }
+        this.playersAmount = players.size();
         int randomPlayerIndex = (int) (Math.random() * this.players.size());
         this.currentMove = new Move(this, this.players.get(randomPlayerIndex));
         Collections.shuffle(cardStack);
@@ -67,7 +69,7 @@ public class Round {
                 beginCards.add(card);
             }
         }
-        if (beginCards.size() > 0) {
+        if (!beginCards.isEmpty()) {
             Collections.shuffle(beginCards);
             Card<?> beginCard = beginCards.get(0);
             this.cardStack.remove(beginCard);
@@ -97,13 +99,14 @@ public class Round {
     }
 
     public void removePlayer(RoundPlayer roundPlayer, RemovePlayerReason reason) {
+        int winPoints = this.players.size() / this.playersAmount * 100;
         this.players.remove(roundPlayer);
         if (reason == RemovePlayerReason.WON) {
             roundPlayer.getPlayer().sendWon();
+            Player removedPlayer = roundPlayer.getPlayer();
+            this.room.getLeaderboard().addPoints(removedPlayer, winPoints);
         }
         if (this.players.size() == 1) {
-            Player removedPlayer = this.players.get(0).getPlayer();
-            this.room.getLeaderboard().addWin(removedPlayer);
             this.room.endRound();
             return;
         }
