@@ -99,11 +99,11 @@ public class Round {
     }
 
     public void removePlayer(RoundPlayer roundPlayer, RemovePlayerReason reason) {
-        int winPoints = this.players.size() / this.playersAmount * 100;
+        int winPoints = (this.players.size() / this.playersAmount) * 100;
         this.players.remove(roundPlayer);
         if (reason == RemovePlayerReason.WON) {
-            roundPlayer.getPlayer().sendWon();
             Player removedPlayer = roundPlayer.getPlayer();
+            removedPlayer.sendWon();
             this.room.getLeaderboard().addPoints(removedPlayer, winPoints);
         }
         if (this.players.size() == 1) {

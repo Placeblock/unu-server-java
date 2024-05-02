@@ -1,10 +1,9 @@
 package de.placeblock.unuserver;
 
+import de.placeblock.unuserver.game.PublicRoomInfo;
 import de.placeblock.unuserver.game.Room;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class RoomManager {
     private final Random random = new Random();
@@ -17,6 +16,16 @@ public class RoomManager {
 
     public Room getRoom(String code) {
         return this.rooms.get(code);
+    }
+
+    public List<PublicRoomInfo> getPublicRoomInfos() {
+        List<PublicRoomInfo> roomInfos = new ArrayList<>();
+        for (Room room : this.rooms.values()) {
+            if (room.isPublicRoom()) {
+                roomInfos.add(room.getPublicRoomInfo());
+            }
+        }
+        return roomInfos;
     }
 
     public Room createRoom() {

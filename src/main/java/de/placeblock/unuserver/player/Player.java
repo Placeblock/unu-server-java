@@ -7,6 +7,7 @@ import de.placeblock.unuserver.cards.CardDeck;
 import de.placeblock.unuserver.communication.Message;
 import de.placeblock.unuserver.communication.QuickReaction;
 import de.placeblock.unuserver.game.Leaderboard;
+import de.placeblock.unuserver.game.PublicRoomInfo;
 import de.placeblock.unuserver.game.Room;
 import de.placeblock.unuserver.game.round.Round;
 import de.placeblock.unuserver.game.round.RoundPlayer;
@@ -14,6 +15,7 @@ import de.placeblock.unuserver.game.round.RoundSettings;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -68,4 +70,6 @@ public abstract class Player {
     public abstract void selectColor();
     public abstract void sendWon();
     public abstract void sendInvalidRoom();
+    public abstract void updateRoomVisibility(PublicRoomInfo info, boolean pub);
+    public abstract void sendPublicRooms(List<PublicRoomInfo> infos);
 }

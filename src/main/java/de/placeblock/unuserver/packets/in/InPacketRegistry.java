@@ -34,6 +34,8 @@ public class InPacketRegistry {
         inPackets.put("card_deck_preset", CardDeckPresetInPacket.class);
         inPackets.put("skip_move", SkipMoveInPacket.class);
         inPackets.put("select_color", SelectColorInPacket.class);
+        inPackets.put("public_rooms", PublicRoomsInPacket.class);
+        inPackets.put("room_visibility", RoomVisibilityInPacket.class);
     }
 
     public static Class<? extends InPacket> getPacketClass(String action) {

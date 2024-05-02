@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import de.placeblock.unuserver.Main;
 import de.placeblock.unuserver.packets.in.InPacket;
 import de.placeblock.unuserver.packets.in.InPacketRegistry;
 import de.placeblock.unuserver.player.Player;
@@ -28,6 +29,7 @@ public class WebSocketEndpoint {
     public void onOpen(Session session) throws IOException {
         WebSocketPlayer webSocketPlayer = new WebSocketPlayer(session);
         this.players.put(session, webSocketPlayer);
+        Main.getPlayerManager().addPlayer(webSocketPlayer);
     }
 
     @OnWebSocketMessage
@@ -66,6 +68,7 @@ public class WebSocketEndpoint {
     public void onClose(Session session, int statusCode, String reason) throws IOException {
         Player player = this.players.remove(session);
         if (player == null) return;
+        Main.getPlayerManager().removePlayer(player.getUuid());
         player.remove();
     }
 
@@ -73,6 +76,7 @@ public class WebSocketEndpoint {
     public void onError(Session session, Throwable throwable) throws Throwable {
         Player player = this.players.remove(session);
         if (player != null) {
+            Main.getPlayerManager().removePlayer(player.getUuid());
             player.remove();
         }
         throw throwable;
