@@ -92,6 +92,7 @@ public class Room {
         }
         this.leaderboard.removePlayer(player);
         this.players.remove(player.getUuid());
+        player.setRoom(null);
         this.executeForPlayers(p -> p.removeRoomPlayer(player, kicked));
 
         if (this.players.isEmpty()) {
