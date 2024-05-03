@@ -47,6 +47,7 @@ public class Room {
     }
 
     public void startRound() {
+        if (this.state == State.INGAME) return;
         List<Card<?>> cards = this.cardDeck.flatten();
         if (cards.size() < this.players.size()*this.roundSettings.getStartCardAmount()*2 ||
                 this.players.size() < 2) return;

@@ -17,4 +17,6 @@ public class RoundSettings {
     private boolean wishOnWish;
     private boolean skipOnInverse2Players;
     private boolean autoNextNoChoice;
+    private boolean clearDrawStackOnLeave;
+    private int punishmentFalseAck;
 }

@@ -112,6 +112,9 @@ public class Round {
         }
         this.room.executeForPlayers(p -> p.removeRoundPlayer(roundPlayer, reason));
         if (this.getCurrentPlayer().equals(roundPlayer)) {
+            if (this.roundSettings.isClearDrawStackOnLeave()) {
+                this.setDrawStack(0);
+            }
             this.setNextPlayer(this.calculateNextPlayer());
         }
     }
@@ -227,6 +230,12 @@ public class Round {
         if (this.acknowledgeLastCardPlayers.contains(player)) {
             this.acknowledgeLastCardPlayers.remove(player);
             this.room.executeForPlayers(p -> p.showPlayerAcknowledgeLastCard(player));
+        } else {
+            int punishmentFalseAck = this.roundSettings.getPunishmentFalseAck();
+            if (punishmentFalseAck > 0 ) {
+                List<Card<?>> cards = this.drawCards(punishmentFalseAck);
+                this.applyCards(player, cards);
+            }
         }
     }
 
@@ -237,12 +246,16 @@ public class Round {
         for (RoundPlayer roundPlayer : this.acknowledgeLastCardPlayers) {
             int punishment = this.getRoundSettings().getNoLastCardAckPunishment();
             List<Card<?>> drawnCards = this.drawCards(punishment);
-            for (Card<?> drawnCard : drawnCards) {
-                roundPlayer.getInventory().addCard(drawnCard);
-                roundPlayer.getPlayer().addCard(drawnCard, AddCardReason.NO_LAST_CARD_ACKNOWLEDGE);
-            }
+            this.applyCards(roundPlayer, drawnCards);
         }
         this.acknowledgeLastCardPlayers.clear();
+    }
+
+    private void applyCards(RoundPlayer roundPlayer, List<Card<?>> drawnCards) {
+        for (Card<?> drawnCard : drawnCards) {
+            roundPlayer.getInventory().addCard(drawnCard);
+            roundPlayer.getPlayer().addCard(drawnCard, AddCardReason.NO_LAST_CARD_ACKNOWLEDGE);
+        }
     }
 
 
