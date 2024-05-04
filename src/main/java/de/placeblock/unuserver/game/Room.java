@@ -130,6 +130,7 @@ public class Room {
     @RequiredArgsConstructor
     public static class RoomData {
         private final String code;
+        private final boolean publicRoom;
         private final Map<UUID, Player> players;
         private final UUID owner;
         private final Chat chat;
@@ -146,6 +147,7 @@ public class Room {
             }
             return new RoomData(
                     room.getCode(),
+                    room.isPublicRoom(),
                     room.getPlayers(),
                     room.getOwner(),
                     room.getChat(),
