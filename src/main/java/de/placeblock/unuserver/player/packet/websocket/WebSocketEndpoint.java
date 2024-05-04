@@ -27,6 +27,7 @@ public class WebSocketEndpoint {
 
     @OnWebSocketConnect
     public void onOpen(Session session) throws IOException {
+        session.setIdleTimeout(60000);
         WebSocketPlayer webSocketPlayer = new WebSocketPlayer(session);
         this.players.put(session, webSocketPlayer);
         Main.getPlayerManager().addPlayer(webSocketPlayer);
