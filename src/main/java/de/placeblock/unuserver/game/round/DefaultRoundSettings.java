@@ -4,13 +4,13 @@ public class DefaultRoundSettings extends RoundSettings{
     public DefaultRoundSettings() {
         super(7, 2,
                 true,
-                false,
                 true,
                 true,
                 true,
                 true,
                 true,
-                false,
+                true,
+                true,
                 true,
                 1);
     }
