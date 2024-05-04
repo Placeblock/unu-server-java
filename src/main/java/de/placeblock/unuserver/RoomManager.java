@@ -11,6 +11,9 @@ public class RoomManager {
 
     public void removeRoom(Room room) {
         Main.LOGGER.info("Removing Room " + room.getCode());
+        if (room.isPublicRoom()) {
+            Main.getPlayerManager().forEach(p -> p.updateRoomVisibility(room.getPublicRoomInfo(), false));
+        }
         this.rooms.remove(room.getCode());
     }
 
