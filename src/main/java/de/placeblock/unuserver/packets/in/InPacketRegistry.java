@@ -36,6 +36,7 @@ public class InPacketRegistry {
         inPackets.put("select_color", SelectColorInPacket.class);
         inPackets.put("public_rooms", PublicRoomsInPacket.class);
         inPackets.put("room_visibility", RoomVisibilityInPacket.class);
+        inPackets.put("draw_draw_stack", DrawDrawStackInPacket.class);
     }
 
     public static Class<? extends InPacket> getPacketClass(String action) {
