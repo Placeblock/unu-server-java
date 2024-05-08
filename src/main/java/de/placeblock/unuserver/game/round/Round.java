@@ -153,11 +153,11 @@ public class Round {
             this.acknowledgeLastCardPlayers.add(roundPlayer);
         }
 
+        this.placeCard(card);
+
         if (roundPlayer.getInventory().size() == 0) {
             this.removePlayer(roundPlayer, RemovePlayerReason.WON);
         }
-
-        this.placeCard(card);
     }
 
     public void drawCard(RoundPlayer roundPlayer) {
