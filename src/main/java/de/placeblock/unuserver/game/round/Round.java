@@ -130,6 +130,10 @@ public class Round {
     }
 
     public void setNextPlayer(RoundPlayer player) {
+        if (this.getCurrentPlayer().getInventory().size() == 0) {
+            this.removePlayer(this.getCurrentPlayer(), RemovePlayerReason.WON);
+            return;
+        }
         this.currentMove = new Move(this, player);
         this.room.executeForPlayers(p -> p.setCurrentPlayer(this.getCurrentPlayer()));
     }
@@ -154,10 +158,6 @@ public class Round {
         }
 
         this.placeCard(card);
-
-        if (roundPlayer.getInventory().size() == 0) {
-            this.removePlayer(roundPlayer, RemovePlayerReason.WON);
-        }
     }
 
     public void drawCard(RoundPlayer roundPlayer) {
