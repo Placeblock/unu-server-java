@@ -6,6 +6,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
+import java.net.InetSocketAddress;
 import java.util.logging.Logger;
 
 public class Main {
@@ -20,11 +21,8 @@ public class Main {
         roomManager = new RoomManager();
         playerManager = new PlayerManager();
 
-        new Thread(() -> {
-
-        }).start();
-
-        Server server = new Server(9101);
+        InetSocketAddress address = new InetSocketAddress("localhost", 9101);
+        Server server = new Server(address);
 
         server.setHandler(new WebSocketHandler() {
             @Override
