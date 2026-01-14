@@ -5,6 +5,7 @@ import de.placeblock.unuserver.cards.CardDeck;
 import de.placeblock.unuserver.communication.Message;
 import de.placeblock.unuserver.communication.QuickReaction;
 import de.placeblock.unuserver.game.Leaderboard;
+import de.placeblock.unuserver.game.PublicRoomInfo;
 import de.placeblock.unuserver.game.Room;
 import de.placeblock.unuserver.game.round.Round;
 import de.placeblock.unuserver.game.round.RoundPlayer;
@@ -24,12 +25,13 @@ import de.placeblock.unuserver.packets.out.round.*;
 import de.placeblock.unuserver.player.Inventory;
 import de.placeblock.unuserver.player.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 public abstract class PacketPlayer extends Player {
     protected abstract void send(OutPacket packet);
 
-    protected void onReceive(InPacket packet) {
+    public void onReceive(InPacket packet) {
         if (packet instanceof RoomRequiredPacket && this.getRoom() == null ||
             packet instanceof RoundRequiredPacket && this.getRoom().getRound() == null) return;
         packet.onReceive(this);
@@ -56,8 +58,8 @@ public abstract class PacketPlayer extends Player {
     }
 
     @Override
-    public void setPlacedCard(Card<?> card) {
-        this.send(new PlayCardOutPacket(card));
+    public void setCurrentCard(Card<?> card) {
+        this.send(new CurrentCardOutPacket(card));
     }
 
     @Override
@@ -153,5 +155,27 @@ public abstract class PacketPlayer extends Player {
     @Override
     public void setCardDeckPresets() {
         this.send(new CardDeckPresetsOutPacket());
+    }
+
+    @Override
+    public void sendWon() {
+        this.send(new PlayerWonOutPacket());
+    }
+    @Override
+    public void sendInvalidRoom() {
+        this.send(new InvalidRoomOutPacket());
+    }
+
+    @Override
+    public void selectColor() {
+        this.send(new SelectColorOutPacket());
+    }
+
+    public void updateRoomVisibility(PublicRoomInfo info, boolean pub) {
+        this.send(new RoomVisibilityOutPacket(info, pub));
+    }
+
+    public void sendPublicRooms(List<PublicRoomInfo> infos) {
+        this.send(new PublicRoomsOutPacket(infos));
     }
 }

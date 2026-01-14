@@ -12,12 +12,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JoinRoomInPacket extends InPacket {
-    private int code;
+    private String code;
 
     @Override
     public void onReceive(Player player) {
         Room room = Main.getRoomManager().getRoom(this.code);
-        if (room == null) return;
+        if (room == null) {
+            player.sendInvalidRoom();
+            return;
+        }
         room.addPlayer(player);
     }
 }

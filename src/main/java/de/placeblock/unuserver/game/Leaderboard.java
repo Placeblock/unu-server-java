@@ -16,19 +16,19 @@ import java.util.UUID;
 public class Leaderboard {
     @JsonIgnore
     private final Room room;
-    private final Map<UUID, Integer> wins = new HashMap<>();
+    private final Map<UUID, Integer> points = new HashMap<>();
 
     public void removePlayer(Player player) {
-        this.wins.remove(player.getUuid());
+        this.points.remove(player.getUuid());
         this.update();
     }
 
-    public void addWin(Player player) {
+    public void addPoints(Player player, int points) {
         UUID playerUuid = player.getUuid();
-        if (this.wins.containsKey(playerUuid)) {
-            this.wins.put(playerUuid, this.wins.get(playerUuid) + 1);
+        if (this.points.containsKey(playerUuid)) {
+            this.points.put(playerUuid, this.points.get(playerUuid) + points);
         } else {
-            this.wins.put(playerUuid, 1);
+            this.points.put(playerUuid, points);
         }
         this.update();
     }

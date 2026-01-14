@@ -13,18 +13,17 @@ import de.placeblock.unuserver.player.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Getter
 @RequiredArgsConstructor
 public class Room {
-    private final int code;
+    private final String code;
     private final Chat chat = new Chat(this);
     private UUID owner;
-    private final List<Player> players = new ArrayList<>();
+    private boolean publicRoom = false;
+    private final Map<UUID, Player> players = new HashMap<>();
     private State state = State.LOBBY;
     private final Leaderboard leaderboard = new Leaderboard(this);
     private RoundSettings roundSettings = new DefaultRoundSettings();
@@ -41,11 +40,18 @@ public class Room {
         this.executeForPlayers(p -> p.setOwner(owner));
     }
 
+    public void setPublic(boolean pub) {
+        this.publicRoom = pub;
+        PublicRoomInfo publicRoomInfo = this.getPublicRoomInfo();
+        Main.getPlayerManager().forEach(p -> p.updateRoomVisibility(publicRoomInfo, pub));
+    }
+
     public void startRound() {
+        if (this.state == State.INGAME) return;
         List<Card<?>> cards = this.cardDeck.flatten();
         if (cards.size() < this.players.size()*this.roundSettings.getStartCardAmount()*2 ||
                 this.players.size() < 2) return;
-        this.round = new Round(this, this.roundSettings, this.players, cards);
+        this.round = new Round(this, this.roundSettings, new ArrayList<>(this.players.values()), cards);
         this.setState(State.INGAME);
     }
 
@@ -70,7 +76,7 @@ public class Room {
         }
         player.setRoom(this);
         Main.LOGGER.info("Adding Player to Room " + this.getCode());
-        this.players.add(player);
+        this.players.put(player.getUuid(), player);
         player.setCardDeckPresets();
         player.setRoomData(RoomData.fromRoom(this));
         this.executeForPlayers(player, p -> p.sendPlayerData(player));
@@ -85,20 +91,22 @@ public class Room {
             }
         }
         this.leaderboard.removePlayer(player);
-        this.players.remove(player);
+        this.players.remove(player.getUuid());
+        player.setRoom(null);
         this.executeForPlayers(p -> p.removeRoomPlayer(player, kicked));
 
-        if (this.players.size() == 0) {
+        if (this.players.isEmpty()) {
             Main.getRoomManager().removeRoom(this);
             return;
         }
         if (player.getUuid().equals(this.owner)) {
-            this.setOwner(this.players.get(0).getUuid());
+            Player newOwner = this.players.values().stream().findFirst().get();
+            this.setOwner(newOwner.getUuid());
         }
     }
 
     public void executeForPlayers(Player ignore, Consumer<Player> callback) {
-        for (Player player : this.players) {
+        for (Player player : this.players.values()) {
             if (player.equals(ignore)) continue;
             callback.accept(player);
         }
@@ -106,6 +114,10 @@ public class Room {
 
     public void executeForPlayers(Consumer<Player> callback) {
         this.executeForPlayers(null, callback);
+    }
+
+    public PublicRoomInfo getPublicRoomInfo() {
+        return new PublicRoomInfo(this.code, this.getPlayers().get(this.owner).getName(), this.players.size());
     }
 
     public enum State {
@@ -117,8 +129,9 @@ public class Room {
     @Getter
     @RequiredArgsConstructor
     public static class RoomData {
-        private final int code;
-        private final List<Player> players;
+        private final String code;
+        private final boolean publicRoom;
+        private final Map<UUID, Player> players;
         private final UUID owner;
         private final Chat chat;
         private final Room.State state;
@@ -134,6 +147,7 @@ public class Room {
             }
             return new RoomData(
                     room.getCode(),
+                    room.isPublicRoom(),
                     room.getPlayers(),
                     room.getOwner(),
                     room.getChat(),

@@ -7,6 +7,7 @@ import de.placeblock.unuserver.cards.CardDeck;
 import de.placeblock.unuserver.communication.Message;
 import de.placeblock.unuserver.communication.QuickReaction;
 import de.placeblock.unuserver.game.Leaderboard;
+import de.placeblock.unuserver.game.PublicRoomInfo;
 import de.placeblock.unuserver.game.Room;
 import de.placeblock.unuserver.game.round.Round;
 import de.placeblock.unuserver.game.round.RoundPlayer;
@@ -14,6 +15,7 @@ import de.placeblock.unuserver.game.round.RoundSettings;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -45,7 +47,7 @@ public abstract class Player {
     public abstract void setCardDeck(CardDeck cardDeck);
     public abstract void removeRoundPlayer(RoundPlayer player, Round.RemovePlayerReason reason);
     public abstract void setPlayerCardAmount(RoundPlayer player, int amount);
-    public abstract void setPlacedCard(Card<?> card);
+    public abstract void setCurrentCard(Card<?> card);
     public abstract void setInventory(Inventory inventory);
     public abstract void setDrawStack(int drawStack);
     public abstract void addCard(Card<?> card, Round.AddCardReason reason);
@@ -65,4 +67,9 @@ public abstract class Player {
     public abstract void setRoundData(Round.RoundData roundData);
     public abstract void removeCard(UUID uuid);
     public abstract void setCardDeckPresets();
+    public abstract void selectColor();
+    public abstract void sendWon();
+    public abstract void sendInvalidRoom();
+    public abstract void updateRoomVisibility(PublicRoomInfo info, boolean pub);
+    public abstract void sendPublicRooms(List<PublicRoomInfo> infos);
 }

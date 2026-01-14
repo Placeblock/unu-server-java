@@ -3,6 +3,8 @@ package de.placeblock.unuserver.cards.impl;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.placeblock.unuserver.cards.*;
 import de.placeblock.unuserver.game.round.Round;
+import de.placeblock.unuserver.game.round.move.Move;
+import de.placeblock.unuserver.packets.in.round.SelectColorInPacket;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonTypeName("wish")
-public class WishCard extends Card<WishCard> implements ForceColorCard, DrawStackApplier {
+public class WishCard extends Card<WishCard> implements ForceColorCard {
     private Color forceColor;
 
     @Override
@@ -26,7 +28,14 @@ public class WishCard extends Card<WishCard> implements ForceColorCard, DrawStac
 
     @Override
     public void place(Round round) {
-
+        round.applyDrawStack();
+        Move currentMove = round.getCurrentMove();
+        currentMove.registerPacketHandler(SelectColorInPacket.class, packet -> {
+            this.setForceColor(packet.getColor());
+            round.getRoom().executeForPlayers(p -> p.setCurrentCard(this));
+            round.setNextPlayer(round.calculateNextPlayer());
+        });
+        currentMove.getRoundPlayer().getPlayer().selectColor();
     }
 
     @Override

@@ -3,6 +3,7 @@ package de.placeblock.unuserver.player;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.placeblock.unuserver.cards.Card;
 import de.placeblock.unuserver.game.Room;
+import de.placeblock.unuserver.game.round.Round;
 import de.placeblock.unuserver.game.round.RoundPlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,13 @@ public class Inventory {
         this.sendPlayersCardAmount();
     }
 
+    public boolean canPlay(Round round, Card<?> card) {
+        for (Card<?> invCard : this.cards) {
+            if (card.isValidNextCard(round, invCard)) return true;
+        }
+        return false;
+    }
+
     public Card<?> getCard(UUID uuid) {
         for (Card<?> card : this.cards) {
             if (card.getUuid().equals(uuid)) {
@@ -46,10 +54,6 @@ public class Inventory {
     public void sendPlayersCardAmount() {
         Room room = this.player.getPlayer().getRoom();
         room.executeForPlayers(p -> p.setPlayerCardAmount(this.player, this.size()));
-    }
-
-    public boolean hasCard(Card<?> card) {
-        return this.cards.contains(card);
     }
 
     public int size() {
