@@ -22,6 +22,7 @@ public class Draw2Card extends Card<Draw2Card> implements Colored {
     @Override
     public boolean isValidNextCard(Round round, Card<?> card) {
         if (card instanceof Colored colored && this.color == colored.getColor()) return true;
+        if (card instanceof WishCard) return true;
         return card instanceof Draw4Card && round.getRoundSettings().isPlus4OnPlus2();
     }
 

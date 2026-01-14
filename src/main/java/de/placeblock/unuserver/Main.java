@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         roomManager = new RoomManager();
-        Server server = new Server(8050);
+        Server server = new Server(9101);
 
         server.setHandler(new WebSocketHandler() {
             @Override
